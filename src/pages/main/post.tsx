@@ -64,6 +64,8 @@ export const Post = (props: Props) => {
     const hasUserLiked = likes?.find((like) => like.userId === user?.uid);
 
     useEffect(() => {
+        const { post } = props;
+
         const likesReference = collection(db, "likes");
 
         const likesDoc = query(likesReference, where("postId", "==", post.id));
