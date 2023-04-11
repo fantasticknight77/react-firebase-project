@@ -21,8 +21,6 @@ export const Post = (props: Props) => {
 
     const likesRef = collection(db, "likes");
 
-    const likesDoc = query(likesRef, where("postId", "==", post.id));
-
     const addLike = async () => {
         try {
             const newDoc = await addDoc(likesRef, {
@@ -66,6 +64,10 @@ export const Post = (props: Props) => {
     const hasUserLiked = likes?.find((like) => like.userId === user?.uid);
 
     useEffect(() => {
+        const likesReference = collection(db, "likes");
+
+        const likesDoc = query(likesReference, where("postId", "==", post.id));
+
         const getLikes = async () => {
             const data = await getDocs(likesDoc);
             setLikes(

@@ -15,9 +15,9 @@ export const Main = () => {
 
     const [postsList, setPostsList] = useState<IPost[] | null>(null);
 
-    const postsRef = collection(db, "posts");
-
     useEffect(() => {
+        const postsRef = collection(db, "posts");
+
         const getPosts = async () => {
             const data = await getDocs(postsRef);
             setPostsList(
