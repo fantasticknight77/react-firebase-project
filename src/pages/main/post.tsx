@@ -1,8 +1,9 @@
 import { addDoc, getDocs, collection, query, where, deleteDoc, doc, } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { db, auth } from "../../conifg/firebase";
 import { IPost } from "./main";
+import React from "react";
 
 interface Props {
     post: IPost;
@@ -20,6 +21,17 @@ export const Post = (props: Props) => {
     const [likes, setLikes] = useState<Like[] | null>(null);
 
     const likesRef = collection(db, "likes");
+
+    const likesDoc = query(likesRef, where("postId", "==", post.id));
+
+    const getLikes = useCallback(
+        async () => {
+            const data = await getDocs(likesDoc);
+            setLikes(
+                data.docs.map((doc) => ({ userId: doc.data().userId, likeId: doc.id }))
+            );
+        }
+        , []);
 
     const addLike = async () => {
         try {
@@ -64,21 +76,8 @@ export const Post = (props: Props) => {
     const hasUserLiked = likes?.find((like) => like.userId === user?.uid);
 
     useEffect(() => {
-        const { post } = props;
-
-        const likesReference = collection(db, "likes");
-
-        const likesDoc = query(likesReference, where("postId", "==", post.id));
-
-        const getLikes = async () => {
-            const data = await getDocs(likesDoc);
-            setLikes(
-                data.docs.map((doc) => ({ userId: doc.data().userId, likeId: doc.id }))
-            );
-        };
-
         getLikes();
-    }, []);
+    }, [getLikes]);
 
     return (
         <div>
