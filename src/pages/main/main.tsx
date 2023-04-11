@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { db } from "../../conifg/firebase";
 import { Post } from "./post";
 
-export interface Post {
+export interface IPost {
     id: string;
     userId: string;
     title: string;
@@ -13,18 +13,18 @@ export interface Post {
 
 export const Main = () => {
 
-    const [postsList, setPostsList] = useState<Post[] | null>(null);
+    const [postsList, setPostsList] = useState<IPost[] | null>(null);
 
     const postsRef = collection(db, "posts");
 
-    const getPosts = async () => {
-        const data = await getDocs(postsRef);
-        setPostsList(
-            data.docs.map((doc) => ({ ...doc.data(), id: doc.id })) as Post[]
-        );
-    };
-
     useEffect(() => {
+        const getPosts = async () => {
+            const data = await getDocs(postsRef);
+            setPostsList(
+                data.docs.map((doc) => ({ ...doc.data(), id: doc.id })) as IPost[]
+            );
+        };
+
         getPosts();
     }, []);
 
